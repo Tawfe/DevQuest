@@ -20,6 +20,13 @@ $RNFirebaseAsStaticFramework = true
 target 'DevQuest' do
   config = use_native_modules!
 
+  # Firebase Swift pods (FirebaseCoreInternal, FirebaseCrashlytics, FirebaseSessions)
+  # import these as modules from Swift — they need explicit module maps when not
+  # using use_frameworks!.
+  pod 'GoogleUtilities', :modular_headers => true
+  pod 'GoogleDataTransport', :modular_headers => true
+  pod 'nanopb', :modular_headers => true
+
   use_react_native!(
     :path => config[:reactNativePath],
     # An absolute path to your application root.
