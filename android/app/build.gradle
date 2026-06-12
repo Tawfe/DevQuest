@@ -4,7 +4,7 @@ apply plugin: "com.facebook.react"
 
 // react-native-config: exposes .env values as BuildConfig fields.
 // Select an env file with e.g. `ENVFILE=.env.staging ./gradlew assembleGmsRelease`.
-apply from: new File(["node", "--print", "require.resolve('react-native-config/package.json')"].execute(null, rootDir).text.trim(), "../dotenv.gradle")
+apply from: new File(["node", "--print", "require.resolve('react-native-config/package.json')"].execute(null, rootDir).text.trim(), "../android/dotenv.gradle")
 
 /**
  * This is the configuration block to customize your React Native Android app.
