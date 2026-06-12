@@ -22,13 +22,12 @@ $RNFirebaseAnalyticsWithoutAdIdSupport = true
 target 'DevQuest' do
   config = use_native_modules!
 
-  # These pods are imported as Swift modules in AppDelegate.swift / Swift files
-  # but don't define module maps by default when not using use_frameworks!.
-  # :modular_headers => true generates the required module map for each.
+  # Firebase Swift pods (FirebaseCoreInternal, FirebaseCrashlytics, FirebaseSessions)
+  # import these as modules from Swift — they need explicit module maps when not
+  # using use_frameworks!.
   pod 'GoogleUtilities', :modular_headers => true
   pod 'GoogleDataTransport', :modular_headers => true
   pod 'nanopb', :modular_headers => true
-  pod 'react-native-app-auth', :modular_headers => true
 
   use_react_native!(
     :path => config[:reactNativePath],
@@ -43,5 +42,15 @@ target 'DevQuest' do
       :mac_catalyst_enabled => false,
       # :ccache_enabled => true
     )
+    # react-native-app-auth is an ObjC pod; without use_frameworks! we must
+    # explicitly generate a module map and set the module name to 'RNAppAuth'
+    # so AppDelegate.swift can `import RNAppAuth`.
+    installer.pods_project.targets.each do |target|
+      next unless target.name == 'react-native-app-auth'
+      target.build_configurations.each do |config|
+        config.build_settings['DEFINES_MODULE'] = 'YES'
+        config.build_settings['PRODUCT_MODULE_NAME'] = 'RNAppAuth'
+      end
+    end
   end
 end
