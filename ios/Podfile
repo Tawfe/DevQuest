@@ -42,15 +42,18 @@ target 'DevQuest' do
       :mac_catalyst_enabled => false,
       # :ccache_enabled => true
     )
-    # react-native-app-auth is an ObjC pod; without use_frameworks! we must
-    # explicitly generate a module map and set the module name to 'RNAppAuth'
-    # so AppDelegate.swift can `import RNAppAuth`.
-    installer.pods_project.targets.each do |target|
-      next unless target.name == 'react-native-app-auth'
-      target.build_configurations.each do |config|
-        config.build_settings['DEFINES_MODULE'] = 'YES'
-        config.build_settings['PRODUCT_MODULE_NAME'] = 'RNAppAuth'
+    # Wire the ObjC bridging header so AppDelegate.swift can use RNAppAuth
+    # types without use_frameworks!. Done here so it survives pod install
+    # regenerating the Xcode project.
+    installer.aggregate_targets.each do |aggregate_target|
+      aggregate_target.user_project.native_targets.each do |target|
+        next unless target.name == 'DevQuest'
+        target.build_configurations.each do |build_config|
+          build_config.build_settings['SWIFT_OBJC_BRIDGING_HEADER'] =
+            'DevQuest/DevQuest-Bridging-Header.h'
+        end
       end
+      aggregate_target.user_project.save
     end
   end
 end

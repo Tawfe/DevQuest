@@ -3,7 +3,8 @@ import React
 import React_RCTAppDelegate
 import ReactAppDependencyProvider
 import FirebaseCore
-import RNAppAuth
+// RNAppAuth types (RNAppAuthAuthorizationFlowManager etc.) come via
+// DevQuest-Bridging-Header.h — no Swift module import needed.
 
 @main
 class AppDelegate: UIResponder, UIApplicationDelegate, RNAppAuthAuthorizationFlowManager {
