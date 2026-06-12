@@ -22,12 +22,13 @@ $RNFirebaseAnalyticsWithoutAdIdSupport = true
 target 'DevQuest' do
   config = use_native_modules!
 
-  # Firebase Swift pods (FirebaseCoreInternal, FirebaseCrashlytics, FirebaseSessions)
-  # import these as modules from Swift — they need explicit module maps when not
-  # using use_frameworks!.
+  # These pods are imported as Swift modules in AppDelegate.swift / Swift files
+  # but don't define module maps by default when not using use_frameworks!.
+  # :modular_headers => true generates the required module map for each.
   pod 'GoogleUtilities', :modular_headers => true
   pod 'GoogleDataTransport', :modular_headers => true
   pod 'nanopb', :modular_headers => true
+  pod 'react-native-app-auth', :modular_headers => true
 
   use_react_native!(
     :path => config[:reactNativePath],
