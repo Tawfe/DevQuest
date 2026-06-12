@@ -16,6 +16,8 @@ prepare_react_native_project!
 # Firebase iOS SDK 10+ ships as prebuilt XCFrameworks so use_frameworks! is
 # not needed; RNFB v21+, MMKV v4, and AppAuth are all ObjC/C++ with no Swift.
 $RNFirebaseAsStaticFramework = true
+# COPPA: use FirebaseAnalytics without Ad IDs — required for Kids apps.
+$RNFirebaseAnalyticsWithoutAdIdSupport = true
 
 target 'DevQuest' do
   config = use_native_modules!
