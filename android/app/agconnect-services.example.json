@@ -1,0 +1,14 @@
+{
+  "client": {
+    "app_id": "000000000",
+    "cp_id": "000000000",
+    "product_id": "000000000",
+    "client_id": "000000000",
+    "client_secret": "REPLACE_FROM_AGC_CONSOLE",
+    "project_id": "000000000",
+    "package_name": "com.devquest.app",
+    "api_key": "REPLACE_FROM_AGC_CONSOLE"
+  },
+  "configuration_version": "3.0",
+  "region": "DE"
+}

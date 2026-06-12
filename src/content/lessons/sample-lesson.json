@@ -1,0 +1,15 @@
+{
+  "$comment": "Shape preview only — the real lesson schema (tracks → units → lessons → exercises, 6 exercise types) is defined in Milestone 2.",
+  "id": "track1-unit2-lesson6",
+  "trackId": "track1-obby",
+  "unitId": "unit2-first-scripts",
+  "title": "Touched events",
+  "xpReward": 20,
+  "exercises": [
+    {
+      "id": "ex1",
+      "type": "predict-output",
+      "prompt": "What happens when a player steps on this part?"
+    }
+  ]
+}

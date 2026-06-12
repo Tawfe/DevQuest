@@ -1,0 +1,32 @@
+{
+  "common": {
+    "appName": "DevQuest",
+    "loading": "Loading…"
+  },
+  "tabs": {
+    "home": "Home",
+    "profile": "Profile"
+  },
+  "signIn": {
+    "tagline": "Build real Roblox games, one quest a day.",
+    "continueWithRoblox": "Continue with Roblox",
+    "signingIn": "Signing in…",
+    "error": "Sign-in didn't work. Give it another try!",
+    "notLiveNote": "Roblox sign-in goes live once the app is approved by Roblox."
+  },
+  "home": {
+    "title": "Today's Quest",
+    "greeting": "Hey, {{name}}!",
+    "guestName": "builder",
+    "energyLabel": "Energy",
+    "streakLabel": "Streak",
+    "scaffoldNote": "This is the scaffold build — lessons arrive with Milestone 2.",
+    "sampleLessonHeading": "First lesson preview"
+  },
+  "profile": {
+    "title": "Profile",
+    "signedInAs": "Signed in as {{name}}",
+    "signOut": "Sign out",
+    "versionLabel": "App version"
+  }
+}
