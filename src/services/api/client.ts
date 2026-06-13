@@ -31,6 +31,17 @@ export const apiClient = axios.create({
   },
 });
 
+// Log every request.
+apiClient.interceptors.request.use(config => {
+  console.log(
+    `[API] → ${config.method?.toUpperCase()} ${config.baseURL ?? ''}${
+      config.url ?? ''
+    }`,
+    ...(config.data !== undefined ? ['\n body:', config.data] : []),
+  );
+  return config;
+});
+
 // Attach the bearer token when one is available.
 apiClient.interceptors.request.use(async config => {
   if (tokenProvider && !config.headers.Authorization) {
@@ -41,6 +52,39 @@ apiClient.interceptors.request.use(async config => {
   }
   return config;
 });
+
+// Log every response (success and error).
+apiClient.interceptors.response.use(
+  response => {
+    console.log(
+      `[API] ← ${response.status} ${response.config.method?.toUpperCase()} ${
+        response.config.url ?? ''
+      }`,
+      '\n body:',
+      response.data,
+    );
+    return response;
+  },
+  (error: unknown) => {
+    const axiosError = error instanceof AxiosError ? error : null;
+    if (axiosError) {
+      console.log(
+        `[API] ✗ ${
+          axiosError.response?.status ?? 'ERR'
+        } ${axiosError.config?.method?.toUpperCase()} ${
+          axiosError.config?.url ?? ''
+        }`,
+        '\n body:',
+        axiosError.response?.data,
+        '\n message:',
+        axiosError.message,
+      );
+    } else {
+      console.log('[API] ✗ unknown error', error);
+    }
+    return Promise.reject(error);
+  },
+);
 
 // 401 → refresh once (single-flight) and replay the original request.
 let refreshInFlight: Promise<string | null> | null = null;
