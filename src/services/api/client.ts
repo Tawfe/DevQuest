@@ -32,12 +32,13 @@ export const apiClient = axios.create({
   },
 });
 
-// Log every request.
+// Log every request. Registered first, so it runs LAST (axios runs request
+// interceptors in reverse) — meaning the auth header is already attached here.
 apiClient.interceptors.request.use(config => {
   console.log(
     `[API] → ${config.method?.toUpperCase()} ${config.baseURL ?? ''}${
       config.url ?? ''
-    }`,
+    } (auth: ${config.headers.Authorization ? 'yes' : 'none'})`,
     ...(config.data !== undefined ? ['\n body:', config.data] : []),
   );
   return config;
