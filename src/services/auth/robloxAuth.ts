@@ -1,22 +1,27 @@
 import {
   authorize,
-  refresh as appAuthRefresh,
   revoke,
   type AuthConfiguration,
 } from 'react-native-app-auth';
 import Config from 'react-native-config';
 
-import { decodeJwtPayload } from './jwt';
+import { exchangeRobloxCode } from '@/services/api/auth';
 import { clearTokens, loadTokens, saveTokens } from './tokenStorage';
 import type { AuthService, AuthTokens, AuthUser } from './types';
 
 /**
  * Roblox OAuth 2.0 — Authorization Code + PKCE (public client, no secret).
  *
- * NOT LIVE YET: the app must be registered at
- * https://create.roblox.com/dashboard/credentials and pass Roblox's app
- * review before sign-in works for anyone other than the app owner's test
- * account. Until then ROBLOX_CLIENT_ID in the .env files is a placeholder.
+ * The on-device app does NOT exchange the authorization code itself. Instead
+ * it runs the Roblox consent flow with `skipCodeExchange`, then hands the
+ * resulting code + PKCE verifier to the DevQuest backend (`POST /auth/roblox`).
+ * The backend completes the exchange with Roblox (it holds the client secret),
+ * creates/looks up the user, and returns its OWN access token — that backend
+ * token is what authenticates every other API call.
+ *
+ * The app must be registered at
+ * https://create.roblox.com/dashboard/credentials with `devquest://oauth/callback`
+ * as an allowed redirect URI.
  */
 const oauthConfig: AuthConfiguration = {
   serviceConfiguration: {
@@ -28,73 +33,41 @@ const oauthConfig: AuthConfiguration = {
   redirectUrl: Config.ROBLOX_REDIRECT_URL ?? 'devquest://oauth/callback',
   scopes: ['openid', 'profile'],
   usePKCE: true,
+  // Keep the authorization code unused on-device so the backend can redeem it.
+  skipCodeExchange: true,
 };
 
-export function userFromIdToken(idToken: string | undefined): AuthUser | null {
-  if (!idToken) {
-    return null;
-  }
-  const payload = decodeJwtPayload(idToken);
-  if (!payload || typeof payload.sub !== 'string') {
-    return null;
-  }
-  return {
-    id: payload.sub,
-    displayName:
-      typeof payload.nickname === 'string'
-        ? payload.nickname
-        : typeof payload.name === 'string'
-        ? payload.name
-        : undefined,
-    pictureUrl:
-      typeof payload.picture === 'string' ? payload.picture : undefined,
-  };
-}
+/** Backend access tokens last 1 hour (per the API contract). */
+const ACCESS_TOKEN_TTL_MS = 60 * 60 * 1000;
 
 async function signIn(): Promise<AuthUser> {
   const result = await authorize(oauthConfig);
+  if (!result.authorizationCode || !result.codeVerifier) {
+    throw new Error(
+      'Roblox sign-in did not return an authorization code to exchange',
+    );
+  }
+
+  const { robloxId, accessToken } = await exchangeRobloxCode({
+    code: result.authorizationCode,
+    codeVerifier: result.codeVerifier,
+    redirectUri: oauthConfig.redirectUrl,
+  });
+
   const tokens: AuthTokens = {
-    accessToken: result.accessToken,
-    refreshToken: result.refreshToken || undefined,
-    idToken: result.idToken || undefined,
-    accessTokenExpiresAt: result.accessTokenExpirationDate
-      ? new Date(result.accessTokenExpirationDate).getTime()
-      : undefined,
+    accessToken,
+    accessTokenExpiresAt: Date.now() + ACCESS_TOKEN_TTL_MS,
   };
   await saveTokens(tokens);
 
-  const user = userFromIdToken(tokens.idToken);
-  if (!user) {
-    throw new Error('Roblox sign-in succeeded but the ID token had no subject');
-  }
-  return user;
+  return { id: robloxId };
 }
 
 async function refresh(): Promise<AuthTokens | null> {
-  const current = await loadTokens();
-  if (!current?.refreshToken) {
-    return null;
-  }
-  try {
-    const result = await appAuthRefresh(oauthConfig, {
-      refreshToken: current.refreshToken,
-    });
-    const tokens: AuthTokens = {
-      accessToken: result.accessToken,
-      // Roblox rotates refresh tokens; keep the new one when present.
-      refreshToken: result.refreshToken ?? current.refreshToken,
-      idToken: result.idToken || current.idToken,
-      accessTokenExpiresAt: result.accessTokenExpirationDate
-        ? new Date(result.accessTokenExpirationDate).getTime()
-        : undefined,
-    };
-    await saveTokens(tokens);
-    return tokens;
-  } catch {
-    // Refresh token expired or revoked — force a fresh sign-in.
-    await clearTokens();
-    return null;
-  }
+  // The backend issues no refresh token; once the 1-hour token expires a fresh
+  // authorization code (a new interactive sign-in) is required.
+  await clearTokens();
+  return null;
 }
 
 async function signOut(): Promise<void> {

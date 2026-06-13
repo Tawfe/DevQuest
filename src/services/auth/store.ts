@@ -45,10 +45,16 @@ export const useAuthStore = create<AuthState>(set => ({
   restore: async () => {
     try {
       const tokens = await robloxAuthService.getTokens();
-      if (tokens) {
-        set({ status: 'signedIn', user: loadCachedUser() });
-        analytics.setUserId(loadCachedUser()?.id ?? null);
+      const isExpired =
+        tokens?.accessTokenExpiresAt != null &&
+        tokens.accessTokenExpiresAt <= Date.now();
+      if (tokens && !isExpired) {
+        const cached = loadCachedUser();
+        set({ status: 'signedIn', user: cached });
+        analytics.setUserId(cached?.id ?? null);
       } else {
+        // No token, or it has expired with no way to refresh — start fresh.
+        await robloxAuthService.signOut();
         set({ status: 'signedOut', user: null });
       }
     } catch (error) {
