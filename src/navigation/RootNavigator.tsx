@@ -6,6 +6,7 @@ import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { useTranslation } from 'react-i18next';
 
 import { HomeScreen } from '@/screens/HomeScreen';
+import { ListScreen } from '@/screens/ListScreen';
 import { ProfileScreen } from '@/screens/ProfileScreen';
 import { SignInScreen } from '@/screens/SignInScreen';
 import { useAuthStore } from '@/services/auth';
@@ -17,6 +18,7 @@ export type RootStackParamList = {
 
 export type MainTabParamList = {
   Home: undefined;
+  List: undefined;
   Profile: undefined;
 };
 
@@ -31,6 +33,9 @@ function TabIcon({ glyph, focused }: { glyph: string; focused: boolean }) {
 
 const renderHomeIcon = ({ focused }: { focused: boolean }) => (
   <TabIcon glyph="🏠" focused={focused} />
+);
+const renderListIcon = ({ focused }: { focused: boolean }) => (
+  <TabIcon glyph="📋" focused={focused} />
 );
 const renderProfileIcon = ({ focused }: { focused: boolean }) => (
   <TabIcon glyph="👤" focused={focused} />
@@ -52,6 +57,14 @@ function MainTabs() {
         options={{
           title: t('tabs.home'),
           tabBarIcon: renderHomeIcon,
+        }}
+      />
+      <Tabs.Screen
+        name="List"
+        component={ListScreen}
+        options={{
+          title: t('tabs.list'),
+          tabBarIcon: renderListIcon,
         }}
       />
       <Tabs.Screen

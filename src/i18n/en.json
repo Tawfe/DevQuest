@@ -5,6 +5,7 @@
   },
   "tabs": {
     "home": "Home",
+    "list": "List",
     "profile": "Profile"
   },
   "signIn": {
@@ -22,6 +23,15 @@
     "streakLabel": "Streak",
     "scaffoldNote": "This is the scaffold build — lessons arrive with Milestone 2.",
     "sampleLessonHeading": "First lesson preview"
+  },
+  "list": {
+    "title": "My List",
+    "empty": "No items yet. Add one below!",
+    "inputPlaceholder": "Add an item…",
+    "add": "Add",
+    "adding": "Adding…",
+    "deleteError": "Couldn't delete item. Try again.",
+    "addError": "Couldn't add item. Try again."
   },
   "profile": {
     "title": "Profile",

@@ -14,4 +14,6 @@ export const queryKeys = {
 
   progress: () => [...queryKeys.all, 'progress'] as const,
   streak: () => [...queryKeys.all, 'streak'] as const,
+
+  list: () => [...queryKeys.all, 'list'] as const,
 } as const;
