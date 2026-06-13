@@ -2,7 +2,9 @@ import '../global.css';
 import '@/i18n';
 
 import React, { useEffect } from 'react';
-import { StatusBar } from 'react-native';
+import { LogBox, StatusBar } from 'react-native';
+
+LogBox.ignoreAllLogs();
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 import { PersistQueryClientProvider } from '@tanstack/react-query-persist-client';
 
