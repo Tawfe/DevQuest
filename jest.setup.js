@@ -51,8 +51,8 @@ jest.mock('react-native-config', () => ({
   __esModule: true,
   default: {
     APP_ENV: 'development',
-    API_BASE_URL: 'https://api.test.devquest.example',
-    ROBLOX_CLIENT_ID: 'test-client-id',
+    API_BASE_URL: 'https://unequal-capacity-happy.ngrok-free.dev',
+    ROBLOX_CLIENT_ID: '5717850802896701234',
     ROBLOX_REDIRECT_URL: 'devquest://oauth/callback',
   },
 }));

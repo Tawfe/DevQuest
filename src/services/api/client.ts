@@ -24,7 +24,8 @@ export function setTokenProvider(provider: TokenProvider | null): void {
 }
 
 export const apiClient = axios.create({
-  baseURL: Config.API_BASE_URL ?? 'https://api.dev.devquest.example',
+  baseURL:
+    Config.API_BASE_URL ?? 'https://unequal-capacity-happy.ngrok-free.dev',
   timeout: API_TIMEOUT_MS,
   headers: {
     'Content-Type': 'application/json',

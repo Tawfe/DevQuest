@@ -24,7 +24,7 @@ const oauthConfig: AuthConfiguration = {
     tokenEndpoint: 'https://apis.roblox.com/oauth/v1/token',
     revocationEndpoint: 'https://apis.roblox.com/oauth/v1/token/revoke',
   },
-  clientId: Config.ROBLOX_CLIENT_ID ?? 'REPLACE_WITH_ROBLOX_CLIENT_ID',
+  clientId: Config.ROBLOX_CLIENT_ID ?? '5717850802896701234',
   redirectUrl: Config.ROBLOX_REDIRECT_URL ?? 'devquest://oauth/callback',
   scopes: ['openid', 'profile'],
   usePKCE: true,
