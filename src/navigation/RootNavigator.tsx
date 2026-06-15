@@ -9,6 +9,7 @@ import { HomeScreen } from '@/screens/HomeScreen';
 import { ListScreen } from '@/screens/ListScreen';
 import { ProfileScreen } from '@/screens/ProfileScreen';
 import { SignInScreen } from '@/screens/SignInScreen';
+import { useRealtimeList } from '@/hooks/useRealtimeList';
 import { useAuthStore } from '@/services/auth';
 
 export type RootStackParamList = {
@@ -91,6 +92,7 @@ function RestoringView() {
 
 export function RootNavigator() {
   const status = useAuthStore(state => state.status);
+  useRealtimeList();
 
   if (status === 'restoring') {
     return <RestoringView />;

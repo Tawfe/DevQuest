@@ -67,6 +67,17 @@ jest.mock('react-native-app-auth', () => ({
   revoke: jest.fn(),
 }));
 
+jest.mock('socket.io-client', () => ({
+  io: jest.fn(() => ({
+    on: jest.fn(),
+    off: jest.fn(),
+    removeAllListeners: jest.fn(),
+    disconnect: jest.fn(),
+    connected: false,
+    id: 'test-socket',
+  })),
+}));
+
 jest.mock('@react-native-firebase/app', () => ({
   getApp: jest.fn(() => ({})),
 }));
