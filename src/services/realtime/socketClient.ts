@@ -34,7 +34,11 @@ export function connectSocket(getToken: TokenGetter): AppSocket {
   }
 
   socket = io(Config.API_BASE_URL ?? 'https://api.dev.devquest.example', {
-    transports: ['websocket'],
+    // Start on HTTP long-polling (the same path the REST client uses and that
+    // tunnels cleanly through ngrok), then transparently upgrade to WebSocket
+    // if the handshake succeeds. Forcing websocket-only skips the polling
+    // handshake and fails on RN/ngrok with a "websocket error".
+    transports: ['polling', 'websocket'],
     reconnectionAttempts: 5,
     reconnectionDelay: 2000,
     reconnectionDelayMax: 30000,
