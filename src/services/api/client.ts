@@ -1,6 +1,6 @@
 import axios, { AxiosError } from 'axios';
-import Config from 'react-native-config';
 
+import { API_BASE_URL } from '@/config/env';
 import { normalizeError } from './errors';
 import { attachRetry } from './retry';
 
@@ -24,8 +24,7 @@ export function setTokenProvider(provider: TokenProvider | null): void {
 }
 
 export const apiClient = axios.create({
-  baseURL:
-    Config.API_BASE_URL ?? 'https://unequal-capacity-happy.ngrok-free.dev',
+  baseURL: API_BASE_URL,
   timeout: API_TIMEOUT_MS,
   headers: {
     'Content-Type': 'application/json',

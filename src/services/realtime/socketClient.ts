@@ -1,6 +1,6 @@
 import { io, type Socket } from 'socket.io-client';
-import Config from 'react-native-config';
 
+import { API_BASE_URL } from '@/config/env';
 import type { ListItem } from '@/services/api/list';
 
 /** Events the server pushes to the client. */
@@ -33,10 +33,9 @@ export function connectSocket(getToken: TokenGetter): AppSocket {
     return socket;
   }
 
-  const url = Config.API_BASE_URL ?? 'https://api.dev.devquest.example';
-  console.log('[socket] connecting to', url);
+  console.log('[socket] connecting to', API_BASE_URL);
 
-  socket = io(url, {
+  socket = io(API_BASE_URL, {
     // Start on HTTP long-polling (the same path the REST client uses and that
     // tunnels cleanly through ngrok), then transparently upgrade to WebSocket
     // if the handshake succeeds. Forcing websocket-only skips the polling
