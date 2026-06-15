@@ -3,6 +3,19 @@ apply plugin: "org.jetbrains.kotlin.android"
 apply plugin: "com.facebook.react"
 
 // react-native-config: exposes .env values as BuildConfig fields.
+// Without this, dotenv.gradle defaults to `.env` (which we don't ship) and
+// every Config.* value is empty. The matcher uses `flavor.startsWith(key)`
+// where `flavor` is the full lowercased variant (e.g. "gmsrelease"), so keys
+// must be the full flavor+buildType combos. Debug → development, Release →
+// production. An explicit `ENVFILE=...` env var still overrides this.
+project.ext.envConfigFiles = [
+    gmsdebug          : ".env.development",
+    gmsdebugoptimized : ".env.development",
+    gmsrelease        : ".env.production",
+    hmsdebug          : ".env.development",
+    hmsdebugoptimized : ".env.development",
+    hmsrelease        : ".env.production",
+]
 // Select an env file with e.g. `ENVFILE=.env.staging ./gradlew assembleGmsRelease`.
 apply from: new File(["node", "--print", "require.resolve('react-native-config/package.json')"].execute(null, rootDir).text.trim(), "../android/dotenv.gradle")
 

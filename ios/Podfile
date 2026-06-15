@@ -42,6 +42,22 @@ target 'DevQuest' do
       :mac_catalyst_enabled => false,
       # :ccache_enabled => true
     )
+
+    # react-native-config bakes env vars in via its "Config codegen" pod script
+    # phase, which reads ENVFILE (defaulting to `.env`, which we don't ship) to
+    # choose the source file. Xcode exposes build settings to script phases as
+    # env vars, so set ENVFILE on every target: Debug builds use the committed
+    # `.env.development`, Release builds use `.env.production`.
+    envfile_for = ->(config_name) do
+      config_name.include?('Debug') ? '.env.development' : '.env.production'
+    end
+    installer.pods_project.targets.each do |target|
+      target.build_configurations.each do |build_config|
+        build_config.build_settings['ENVFILE'] =
+          envfile_for.call(build_config.name)
+      end
+    end
+
     # Wire the ObjC bridging header so AppDelegate.swift can use RNAppAuth
     # types without use_frameworks!. Done here so it survives pod install
     # regenerating the Xcode project.
@@ -51,6 +67,8 @@ target 'DevQuest' do
         target.build_configurations.each do |build_config|
           build_config.build_settings['SWIFT_OBJC_BRIDGING_HEADER'] =
             'DevQuest/DevQuest-Bridging-Header.h'
+          build_config.build_settings['ENVFILE'] =
+            envfile_for.call(build_config.name)
         end
       end
       aggregate_target.user_project.save
