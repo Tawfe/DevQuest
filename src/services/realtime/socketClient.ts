@@ -39,6 +39,10 @@ export function connectSocket(getToken: TokenGetter): AppSocket {
     // if the handshake succeeds. Forcing websocket-only skips the polling
     // handshake and fails on RN/ngrok with a "websocket error".
     transports: ['polling', 'websocket'],
+    // ngrok's free tier serves an HTML browser-warning interstitial for
+    // requests it thinks are browsers, which breaks the Engine.IO polling
+    // handshake ("xhr poll error"). This header skips that page.
+    extraHeaders: { 'ngrok-skip-browser-warning': 'true' },
     reconnectionAttempts: 5,
     reconnectionDelay: 2000,
     reconnectionDelayMax: 30000,
