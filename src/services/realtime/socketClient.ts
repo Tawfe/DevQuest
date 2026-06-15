@@ -35,6 +35,9 @@ export function connectSocket(getToken: TokenGetter): AppSocket {
 
   socket = io(Config.API_BASE_URL ?? 'https://api.dev.devquest.example', {
     transports: ['websocket'],
+    reconnectionAttempts: 5,
+    reconnectionDelay: 2000,
+    reconnectionDelayMax: 30000,
     auth: cb => {
       getToken()
         .then(token => cb({ token: token ? `Bearer ${token}` : '' }))
@@ -48,6 +51,9 @@ export function connectSocket(getToken: TokenGetter): AppSocket {
   );
   socket.on('connect_error', error =>
     console.log('[socket] connect_error:', error.message),
+  );
+  socket.io.on('reconnect_failed', () =>
+    console.log('[socket] reconnect_failed — giving up after 5 attempts'),
   );
 
   return socket;
