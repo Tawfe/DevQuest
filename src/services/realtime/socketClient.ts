@@ -33,7 +33,10 @@ export function connectSocket(getToken: TokenGetter): AppSocket {
     return socket;
   }
 
-  socket = io(Config.API_BASE_URL ?? 'https://api.dev.devquest.example', {
+  const url = Config.API_BASE_URL ?? 'https://api.dev.devquest.example';
+  console.log('[socket] connecting to', url);
+
+  socket = io(url, {
     // Start on HTTP long-polling (the same path the REST client uses and that
     // tunnels cleanly through ngrok), then transparently upgrade to WebSocket
     // if the handshake succeeds. Forcing websocket-only skips the polling
